@@ -1,20 +1,35 @@
+pipeline{
+
+	agent { label 'JDK8'}
+
+	stages{
+
+		stage('checkout the code'){
+
+			steps {
+	
+				git branch: 'sprint1_develop', url: 'https://github.com/dhushyadav/game-of-life.git'
 
 
+			}
+		}
+		stage('build th code'){
 
-node('JDK8') {
-        stage('SourceCode') {
-                git branch: 'sprint1_develop', url: 'https://github.com/dhushyadav/game-of-life.git'
-       }
+			steps{
+				 sh 'mvn clean package'
+				}
+				
+			}
 
-        stage('Build the code') {
-                // Maven build process
-                sh 'mvn clean package'
-       }
+		stage('artifacts and test'){
 
-        stage('Archiving artifacts & Junit Test Results') {
+		steps{
+			archiveArtifacts artifacts: 'gameoflife-web/target/*.war', followSymlinks: false
+			junit stdioRetention: '', testResults: 'gameoflife-web/target/surefire-reports/*.xml'
+				}
+			}
 
-	archiveArtifacts artifacts: 'gameoflife-web/target/*.war', followSymlinks: false
-	junit stdioRetention: '', testResults: 'gameoflife-web/target/surefire-reports/*.xml'
+
 	}
 
 }
